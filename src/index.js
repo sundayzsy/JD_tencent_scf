@@ -84,7 +84,10 @@ exports.main_handler = async (event, context, callback) => {
 
 
 function loadScripts(msg, includeAll) {
-    let now_hour = (new Date().getUTCHours() + 8) % 24
+    let now_hour = ( new Date().getUTCHours() + 8 ) % 24
+    let now_min = ( new Date().getUTCMinutes() ) % 10 + 1
+    console.debug( `now_hour:`, now_hour )
+    console.debug( `now_min:`, now_min )
     console.log('hourly config触发,当前:', now_hour)
     if (msg) {
         const hour = Number(msg)
@@ -116,7 +119,12 @@ function loadScripts(msg, includeAll) {
         const cron = config[script]
         if (typeof cron == 'number') {
             // console.debug(`number param:${cron}`)
-            if (now_hour % cron == 0) {
+
+            let cron_hour = cron % 24
+            let cron_min = ( cron - cron_hour ) * 10
+            console.debug( `cron_hour:`, cron_hour )
+            console.debug( `cron_min:`, cron_min )
+            if ( now_hour == cron_hour == 0 && now_min == cron_min ) {
                 console.debug(`${script}:数字参数触发`)
                 scripts.push(script)
             }
